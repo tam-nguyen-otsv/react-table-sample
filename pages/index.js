@@ -69,6 +69,26 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
   );
 }
 
+const serverData = new Array(1000).fill(1).map((_, index) => ({
+  name: `Test name ${index}`,
+  email: `test${index}@gmail.com`,
+  address1: `address ${index}`,
+  address2: `address ${index}`,
+  gender: index % 2,
+  phone: `phone ${index}`,
+  age: (index % 60) + 18,
+  age1: (index % 60) + 18,
+  age2: (index % 60) + 18,
+  age3: (index % 60) + 18,
+  age4: (index % 60) + 18,
+  age5: (index % 60) + 18,
+  age6: (index % 60) + 18,
+  age7: (index % 60) + 18,
+  age8: (index % 60) + 18,
+  age9: (index % 60) + 18,
+  action: "Delete",
+}));
+
 export default function Home() {
   const columns = React.useMemo(
     () => [
@@ -155,29 +175,10 @@ export default function Home() {
     []
   );
 
-  const data = React.useMemo(
-    () =>
-      new Array(1000).fill(1).map((_, index) => ({
-        name: `Test name ${index}`,
-        email: `test${index}@gmail.com`,
-        address1: `address ${index}`,
-        address2: `address ${index}`,
-        gender: index % 2,
-        phone: `phone ${index}`,
-        age: (index % 60) + 18,
-        age1: (index % 60) + 18,
-        age2: (index % 60) + 18,
-        age3: (index % 60) + 18,
-        age4: (index % 60) + 18,
-        age5: (index % 60) + 18,
-        age6: (index % 60) + 18,
-        age7: (index % 60) + 18,
-        age8: (index % 60) + 18,
-        age9: (index % 60) + 18,
-        action: "Delete",
-      })),
-    []
-  );
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [pageCount, setPageCount] = React.useState(0);
+  const fetchIdRef = React.useRef(0);
 
   const renderRowSubComponent = React.useCallback(
     ({ row, rowProps, visibleColumns }) => (
@@ -190,12 +191,31 @@ export default function Home() {
     []
   );
 
+  const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+    const fetchId = ++fetchIdRef.current;
+
+    setLoading(true);
+    setTimeout(() => {
+      if (fetchId === fetchIdRef.current) {
+        const startRow = pageSize * pageIndex;
+        const endRow = startRow + pageSize;
+        setData(serverData.slice(startRow, endRow));
+        setPageCount(Math.ceil(serverData.length / pageSize));
+
+        setLoading(false);
+      }
+    }, 1000);
+  }, []);
+
   return (
     <div className={styles.container}>
       <Table
         columns={columns}
         data={data}
         renderRowSubComponent={renderRowSubComponent}
+        fetchData={fetchData}
+        loading={loading}
+        pageCount={pageCount}
       />
     </div>
   );

@@ -33,6 +33,9 @@ const defaultPropGetter = () => ({});
 export function Table({
   columns,
   data,
+  fetchData,
+  loading,
+  pageCount: controlledPageCount,
   renderRowSubComponent,
   getHeaderProps = defaultPropGetter,
   getColumnProps = defaultPropGetter,
@@ -67,6 +70,9 @@ export function Table({
     {
       columns,
       data,
+      initialState: { pageIndex: 0 }, // Pass our hoisted table state
+      manualPagination: true,
+      pageCount: controlledPageCount,
     },
     useExpanded,
     usePagination,
@@ -95,6 +101,9 @@ export function Table({
     }
   );
 
+  React.useEffect(() => {
+    fetchData({ pageIndex, pageSize });
+  }, [fetchData, pageIndex, pageSize]);
   // Render the UI for your table
   return (
     <>
@@ -163,6 +172,17 @@ export function Table({
               </React.Fragment>
             );
           })}
+          <tr>
+            {loading ? (
+              // Use our custom loading state to show a loading indicator
+              <td colSpan="10000">Loading...</td>
+            ) : (
+              <td colSpan="10000">
+                Showing {page.length} of ~{controlledPageCount * pageSize}{" "}
+                results
+              </td>
+            )}
+          </tr>
         </tbody>
       </table>
       <div className="pagination">
