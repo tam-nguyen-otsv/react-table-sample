@@ -1,0 +1,28 @@
+.table {
+  border: 1px solid #ddd;
+  display: block;
+  height: 300px;
+  overflow: scroll;
+  background-color: white;
+}
+
+.tHead {
+  top: 0;
+}
+
+.thCell {
+  background-color: lightgreen;
+}
+.tbCell {
+  flex: 300 0 auto;
+  text-overflow: ellipsis;
+  background-color: whitesmoke;
+}
+.sticky {
+  position: sticky !important;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  text-overflow: ellipsis;
+  background-color: whitesmoke;
+}
